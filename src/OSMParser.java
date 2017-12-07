@@ -37,11 +37,11 @@ public class OSMParser
 	int mBrojacElemenataZaLekturu = 0;
 
 	private String mNazivUlaznogFajla;
+	private boolean mbForsirajZamenuTagaName = false;
+	private List<String> mTagoviZaForsirajZamenuTagaNameList;
 
 	public static void main(String args[])
 	{
-
-		int i = 0;
 		String izlazniFajl = null;
 		String mUlazniFajl = null;
 		String arg;
@@ -71,17 +71,30 @@ public class OSMParser
 			System.out.println("-azuriratiNameSrLatn");
 			System.out.println("\tAzurira tag name:sr-Latn.");			
 
+			System.out.println("-forsirajZamenuTagaName");
+			System.out.println("\tAzurira tag name sa prvim dostupnm tagom iz liste koja sledi.");
 
 			System.out.println("\n\nPrimer za popunjavanje taga name:sr : \njava -cp serbiantransliterator.jar OSMParser -ulaz=serbia.osm -izlaz=rezultat.osm -azuriratiNameSr");
+
+			System.out.println("Primer za popunjavanje taga name sa drugim tagovima: \njava -cp serbiantransliterator.jar OSMParser -ulaz=serbia.osm -izlaz=rezultat.osm -forsirajZamenuTagaName name:sr name:sr-Latn");
 
 			return;
 		}
 
+		int i = 0;
 		while (i < args.length && args[i].startsWith("-")) {
 			arg = args[i++];
 
-			// podrazumevano pismo za tag name
-			if (arg.equals("-name=bezpromene")) {
+			if (arg.equals("-forsirajZamenuTagaName")) { // kada je forsirajZamenuTagaName ne obazire se na ostale parametre 
+				List<String> listaNameTagova = new ArrayList<String>();
+				while (i < args.length) {					
+					listaNameTagova.add(args[i++]);
+				}
+				parser.setForsirajZamenuTagaName(true);
+				parser.setTagoveZaForsirajZamenuTagaName(listaNameTagova);
+				System.out.println("forsirana zamena tagova: " + listaNameTagova);
+
+			} else if (arg.equals("-name=bezpromene")) {
 				parser.setPodrazumevanoPismo(PodrazumevanoPismo.BEZ_PROMENE);
 				System.out.println("*Ne menja tag name.");
 			}
@@ -160,6 +173,16 @@ public class OSMParser
 			parser.run("serbia.osm");
 		else
 			parser.run(mUlazniFajl);
+	}
+
+	//Definise tagove u redosledu za zamenu pri forsiranom definisanje name
+	private void setTagoveZaForsirajZamenuTagaName(List<String> listaNameTagova) {
+		mTagoviZaForsirajZamenuTagaNameList= listaNameTagova;	
+	}
+
+
+	private void setForsirajZamenuTagaName(boolean b) {
+		mbForsirajZamenuTagaName = b;	
 	}
 
 
@@ -280,13 +303,16 @@ public class OSMParser
 
 			while ((strLine = br.readLine()) != null) {
 				if(strLine.contains("<node ") | strLine.contains("<way ")| strLine.contains("<relation ") ){  // ako je pocetak novog node
-					if(preslovljavanjeOSM.daLiImaIzmena()){ //  ako ima izmena
+					if(mbForsirajZamenuTagaName){
+						ispis(srediElementSaForsiranomZamenomTagaName(element, preslovljavanjeOSM));
+					} 
+					else if(preslovljavanjeOSM.daLiImaIzmena()){ //  ako ima izmena
 						if(preslovljavanjeOSM.daLiJeBezbednoPreslovljavanje()){ // i ako je bezbedno
 							elementString = srediElement(element, preslovljavanjeOSM);
 							ispis(elementString);
 							//				System.out.println("--------------------"+preslovljavanjeOSM.pregled());
 							mOutPregledFile.write(preslovljavanjeOSM.pregled());
-							
+
 							// Ako ima izmena generise diff fajl ili upisuje u lekturu 
 							if(mbGenerisanjeDiffFajlova){
 								generisiDiffFajl(elementString);
@@ -294,7 +320,7 @@ public class OSMParser
 							else {
 								ispisZaLekturu(elementToString(element));								
 							}
-							
+
 						}
 						else{ // ako nije bezbedno - za lektorisanje
 							ispisZaLekturu(elementToString(element));
@@ -335,7 +361,7 @@ public class OSMParser
 			//Close the output streams
 			mOutFile.close();
 			mOutPregledFile.close();
-			
+
 			try {
 				mOutZaLekturu.write("</osm>");
 				mOutZaLekturu.close();
@@ -362,6 +388,36 @@ public class OSMParser
 
 	}
 
+	/**
+	 * 	Menja tag name sa vrednoscu prvog taga is spiska tagova 
+	 */
+	private String srediElementSaForsiranomZamenomTagaName(List<String> element, PreslovljavanjeOSM preslovljavanje){
+		String rezultat = "";
+		String novName = null;
+		
+		// pronalazi 
+		for (String key: mTagoviZaForsirajZamenuTagaNameList)
+		{
+			if(preslovljavanje.getTagValue(key).length()>2){
+				novName = preslovljavanje.getTagValue(key);
+				break;
+			}
+		}
+		
+		for (String s : element)
+		{
+			if(novName != null && s.contains("<tag k=\"name\"")){
+				//System.out.println("name");
+				rezultat += "\t\t<tag k=\"name\" v=\"" + novName + "\" />\n";
+			}
+			else{
+				rezultat += s + "\n";
+			}
+		}
+
+		return rezultat;
+	}
+	
 	/**
 	 * Vraca string sa korigovanim vrednostima tagova
 	 * @param element
