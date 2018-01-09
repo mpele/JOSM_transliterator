@@ -33,6 +33,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -331,15 +332,14 @@ public class PreslovljavanjeDialog extends JDialog {
 
 		// zastita ako se ne pokrece iz JOSM-a vec iz Eclipse-a
 		try{
-			Main.main.getCurrentDataSet().getSelected();
+			MainApplication.getLayerManager().getEditDataSet().getSelected();
 		}
 		catch(Exception e){
 			return;
 		}
 
 
-		Collection<OsmPrimitive> selection = Main.main.getCurrentDataSet().getSelected();
-		//Collection<Node> selection = Main.main.getCurrentDataSet().getNodes();
+		Collection<OsmPrimitive> selection = MainApplication.getLayerManager().getEditDataSet().getSelected();
 
 		for (OsmPrimitive element : selection) {
 			PreslovljavanjeOSM preslovljavanjeOSM = new PreslovljavanjeOSM();
@@ -387,7 +387,7 @@ public class PreslovljavanjeDialog extends JDialog {
 
 		// //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		Collection<Command> c = new LinkedList<Command>();
-		Collection<OsmPrimitive> selection = Main.main.getCurrentDataSet().getSelected();
+		Collection<OsmPrimitive> selection = MainApplication.getLayerManager().getEditDataSet().getSelected();
 		for (OsmPrimitive element : selection) {
 			numRow = getRowZapisa(element.getId()); // vraca -1 ako nije stiklirano da treba da se menja
 			if (numRow >= 0) {
