@@ -394,6 +394,7 @@ public class OSMParser
 	private String srediElementSaForsiranomZamenomTagaName(List<String> element, PreslovljavanjeOSM preslovljavanje){
 		String rezultat = "";
 		String novName = null;
+		boolean daLiImaTagName = false;
 		
 		// pronalazi 
 		for (String key: mTagoviZaForsirajZamenuTagaNameList)
@@ -409,12 +410,18 @@ public class OSMParser
 			if(novName != null && s.contains("<tag k=\"name\"")){
 				//System.out.println("name");
 				rezultat += "\t\t<tag k=\"name\" v=\"" + novName + "\" />\n";
+				daLiImaTagName = true;
 			}
 			else{
 				rezultat += s + "\n";
 			}
 		}
 
+		// ako nije definisan tag name a jeste neki od forsiranih tagova onda kreira nov tag name
+		if(novName != null && daLiImaTagName == false){
+			rezultat.replaceFirst("\t\t<tag k=\"name",  "\t\t<tag k=\"name\" v=\"" + novName + "\" />\n" + "\t\t<tag k=\"name");
+		}
+		
 		return rezultat;
 	}
 	
