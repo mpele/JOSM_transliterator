@@ -29,6 +29,7 @@ public class PripremaZaRenderOSM extends StringElemetnOSM{
 		
 		pripremaZaRenderOSM.setNameTagovi(Arrays.asList("name:sl", "name:sr-Latn"));
 		pripremaZaRenderOSM.setNameSrLatTagovi(Arrays.asList("Pname:sr", "name:sr-Latn"));
+		
 		System.out.println(pripremaZaRenderOSM.pregled());
 		
 		System.out.println(pripremaZaRenderOSM.getName());

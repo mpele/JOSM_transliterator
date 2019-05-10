@@ -192,4 +192,8 @@ public class StringElemetnOSM {
 		return izlaz;
 
 	}
+	
+	public boolean daLiJeDefinisanTag(String tag) {
+		return mSviOriginalniTagoviMap.containsKey(tag);
+	}
 }

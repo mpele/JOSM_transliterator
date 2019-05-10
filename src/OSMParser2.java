@@ -14,7 +14,7 @@ public class OSMParser2
 {
 	FileWriter mOutFile;
 
-	PripremaZaRenderOSM pripremaZaRenderOSM = new PripremaZaRenderOSM();
+	public PripremaZaRenderOSM pripremaZaRenderOSM = new PripremaZaRenderOSM();
 
 	boolean mbGenerisanjeNovOSMFajl = false; // menja se ako se definise izlazni fajl
 
@@ -32,12 +32,10 @@ public class OSMParser2
 			System.out.println("-ulaz=");
 			System.out.println("\tUlazni fajl");
 
-			System.out.println("-forsirajZamenuTagaName");
-			System.out.println("\tAzurira tag name sa prvim dostupnm tagom iz liste koja sledi.");
+			System.out.println("prva grupa tagova (razdvojenih sa ';') je za name a druga za name:sr-Latn ");
+			System.out.println("ako za name:sr-Latn tag pocinje sa 'P' radi se preslovljavanje u latinicu ");
 
-			System.out.println("\n\nPrimer za popunjavanje taga name:sr : \njava -cp serbiantransliterator.jar OSMParser -ulaz=serbia.osm -izlaz=rezultat.osm -azuriratiNameSr");
-
-			System.out.println("Primer za popunjavanje taga name sa drugim tagovima: \njava -cp serbiantransliterator.jar OSMParser -ulaz=serbia.osm -izlaz=rezultat.osm -forsirajZamenuTagaName name:sr name:sr-Latn");
+			System.out.println("Primer za popunjavanje taga name sa drugim tagovima: \njava -cp serbiantransliterator.jar OSMParser2 -ulaz=serbia.osm -izlaz=rezultat.osm name:sr;name name:sr-Latn;Pname:sr");
 
 			return;
 		}
@@ -46,17 +44,8 @@ public class OSMParser2
 		while (i < args.length && args[i].startsWith("-")) {
 			arg = args[i++];
 
-			if (arg.equals("-forsirajZamenuTagaName")) { // kada je forsirajZamenuTagaName ne obazire se na ostale parametre 
-				List<String> listaNameTagova = new ArrayList<String>();
-				while (i < args.length) {					
-					listaNameTagova.add(args[i++]);
-				}
-				//parser.setTagoveZaForsirajZamenuTagaName(listaNameTagova);
-				System.out.println("forsirana zamena tagova: " + listaNameTagova);
-			}
-
 			// izlazni fajl sa primenjenim svim izmenama
-			else if (arg.startsWith("-izlaz=")) {
+			if (arg.startsWith("-izlaz=")) {
 				izlazniFajl = arg.substring(7); // od stringa 
 				System.out.println("Izlazni fajl: "+izlazniFajl);
 			}
@@ -65,23 +54,11 @@ public class OSMParser2
 				mUlazniFajl = arg.substring(6); // od stringa 
 				System.out.println("Ulazni fajl: "+mUlazniFajl);
 			}
-			else{
-				System.out.println("\n!! Nepoznat argument !!");
-			}
-			
 		}
+		
+		parser.pripremaZaRenderOSM.setNameTagovi(Arrays.asList(args[i++].split(";")));
+		parser.pripremaZaRenderOSM.setNameSrLatTagovi(Arrays.asList(args[i++].split(";")));
 
-
-		//		parser.setGenerisanjeDiffFajlovi(true);
-		//		parser.setGenerisanjeLekturisaniFajlovi(true);
-		//		parser.setIzlazniFajl("rezultat.osm");
-		//parser.setPodrazumevanoPismo(PodrazumevanoPismo.LATINICA);
-
-		//za upload
-		//		parser.setPodrazumevanoPismo(PodrazumevanoPismo.BEZ_PROMENE);
-		//		parser.setAzuriratiName(false);
-		//		parser.setAzuriratiNameSr(true);
-		//		parser.setAzuriratiNameSrLatn(true);
 
 		if(izlazniFajl!=null)
 			parser.setIzlazniFajl(izlazniFajl);
@@ -94,6 +71,7 @@ public class OSMParser2
 			parser.run(mUlazniFajl);
 	}
 
+	
 	private void ispis(String string){
 		if(mbGenerisanjeNovOSMFajl){ 
 			try {
@@ -120,22 +98,12 @@ public class OSMParser2
 		}	
 	}
 
+	
 	/**
 	 * Startuje parser sa ulaznim fajlom
 	 * @param nazivUlaznogFajla
 	 */
 	public void run(String ulazniFajl){
-
-		// TODO u parametre !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// TODO u parametre !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// TODO u parametre !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// TODO u parametre !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// TODO u parametre !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		
-		pripremaZaRenderOSM.setNameTagovi(Arrays.asList("name:sr", "name:sr-Latn", "name"));
-		pripremaZaRenderOSM.setNameTagovi(Arrays.asList("name:sr-Latn", "Pname:sr", "name"));
-
-		
 		
 		//izdvaja sam naziv fajla bez putanje i ekstenzije
 		mNazivUlaznogFajla=ulazniFajl.replace(".osm", "");// brise ekstenziju - osm
@@ -196,6 +164,9 @@ public class OSMParser2
 			if(s.contains("<tag k=\"name\"")){
 				//System.out.println("name");
 				rezultat += "\t\t<tag k=\"name\" v=\""+pripremaZaRenderOSM2.getName() + "\" />\n";
+				if(!pripremaZaRenderOSM2.daLiJeDefinisanTag("name:sr-Latn")){
+					rezultat += "\t\t<tag k=\"name:sr-Latn\" v=\""+pripremaZaRenderOSM2.getName_srLatn()+ "\" />\n";
+				}
 			}
 			else if(s.contains("<tag k=\"name:sr-Latn\"")){
 				//System.out.println("name sr");
