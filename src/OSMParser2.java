@@ -117,7 +117,7 @@ public class OSMParser2
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
 			String strLine;
-			String elementString;
+			String elementString = null;
 
 			List<String> element = new ArrayList<String>();
 
@@ -140,9 +140,9 @@ public class OSMParser2
 				pripremaZaRenderOSM.ucitajTagIzStringa(strLine);
 			}
 
-			// kopija koda iz glavne petlje
-
-			// TODO staviti kopiju koda iz glavne petlje - za poslednji element !!!!!!!!!!!!!!!!!!!
+			// poslednji element i zavrsetak fajla
+			elementString = srediElement(element, pripremaZaRenderOSM);
+			ispis(elementString);
 
 
 			//Close the input stream
