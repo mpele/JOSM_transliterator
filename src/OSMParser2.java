@@ -32,7 +32,7 @@ public class OSMParser2
 			System.out.println("-ulaz=");
 			System.out.println("\tUlazni fajl");
 
-			System.out.println("prva grupa tagova (razdvojenih sa ';') je za name a druga za name:sr-Latn ");
+			System.out.println("prva grupa tagova (razdvojenih sa '@') je za name a druga za name:sr-Latn ");
 			System.out.println("ako za name:sr-Latn tag pocinje sa 'P' radi se preslovljavanje u latinicu ");
 
 			System.out.println("Primer za popunjavanje taga name sa drugim tagovima: \njava -cp serbiantransliterator.jar OSMParser2 -ulaz=serbia.osm -izlaz=rezultat.osm name:sr;name name:sr-Latn;Pname:sr");
@@ -56,8 +56,8 @@ public class OSMParser2
 			}
 		}
 		
-		parser.pripremaZaRenderOSM.setNameTagovi(Arrays.asList(args[i++].split(";")));
-		parser.pripremaZaRenderOSM.setNameSrLatTagovi(Arrays.asList(args[i++].split(";")));
+		parser.pripremaZaRenderOSM.setNameTagovi(Arrays.asList(args[i++].split("@")));
+		parser.pripremaZaRenderOSM.setNameSrLatTagovi(Arrays.asList(args[i++].split("@")));
 
 
 		if(izlazniFajl!=null)
