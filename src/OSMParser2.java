@@ -17,6 +17,7 @@ public class OSMParser2
 	public PripremaZaRenderOSM pripremaZaRenderOSM = new PripremaZaRenderOSM();
 
 	boolean mbGenerisanjeNovOSMFajl = false; // menja se ako se definise izlazni fajl
+	boolean debug = false;
 
 	private String mNazivUlaznogFajla;
 	public static void main(String args[])
@@ -36,6 +37,7 @@ public class OSMParser2
 			System.out.println("ako za name:sr-Latn tag pocinje sa 'P' radi se preslovljavanje u latinicu ");
 
 			System.out.println("Primer za popunjavanje taga name sa drugim tagovima: \njava -cp serbiantransliterator.jar OSMParser2 -ulaz=serbia.osm -izlaz=rezultat.osm name:sr;name name:sr-Latn;Pname:sr");
+			System.out.println("Za debug dodati jos parametar debug na kraj.");
 
 			return;
 		}
@@ -58,6 +60,9 @@ public class OSMParser2
 		
 		parser.pripremaZaRenderOSM.setNameTagovi(Arrays.asList(args[i++].split("@")));
 		parser.pripremaZaRenderOSM.setNameSrLatTagovi(Arrays.asList(args[i++].split("@")));
+		if(args.length > i){
+			parser.setDebug(true);
+		}
 
 
 		if(izlazniFajl!=null)
@@ -72,7 +77,12 @@ public class OSMParser2
 	}
 
 	
-	private void ispis(String string){
+	private void setDebug(boolean b) {
+		debug = b;
+	}
+
+
+	private void ispisUFajl(String string){
 		if(mbGenerisanjeNovOSMFajl){ 
 			try {
 				mOutFile.write(string);
@@ -123,26 +133,34 @@ public class OSMParser2
 
 			//String newline = System.getProperty("line.separator");
 
+			boolean poceoDaObradjuje = false; // da preskoci zaglavlje
 			while ((strLine = br.readLine()) != null) {
+				
 				if(strLine.contains("<node ") | strLine.contains("<way ")| strLine.contains("<relation ") ){  // ako je pocetak novog node
-
 					elementString = srediElement(element, pripremaZaRenderOSM);
-					ispis(elementString);
+					ispisUFajl(elementString);
 
 					element.clear();
 					pripremaZaRenderOSM.clear();
 					elementString="";
+					poceoDaObradjuje = true;
+					element.add(strLine);						
 				}
-
-
-				element.add(strLine);
-				// dodaje sve tagove u preslovljavanje	
-				pripremaZaRenderOSM.ucitajTagIzStringa(strLine);
+				else{
+					if(!poceoDaObradjuje){
+						ispisUFajl(strLine+"\n");
+					}
+					else{
+						element.add(strLine);						
+						// dodaje sve tagove u preslovljavanje	
+						pripremaZaRenderOSM.ucitajTagIzStringa(strLine);
+					}
+				}
 			}
 
 			// poslednji element i zavrsetak fajla
 			elementString = srediElement(element, pripremaZaRenderOSM);
-			ispis(elementString);
+			ispisUFajl(elementString);
 
 
 			//Close the input stream
@@ -159,18 +177,30 @@ public class OSMParser2
 
 	private String srediElement(List<String> element, PripremaZaRenderOSM pripremaZaRenderOSM2) {
 		String rezultat = "";
+		String debugString = "";
+		
+		if(element.isEmpty()){
+			return "";
+		}
+		
+		if(debug){
+			int pomA = element.get(0).indexOf(" id=");
+			int pomB = element.get(0).indexOf('"', pomA+6);
+			debugString = " " + element.get(0).substring(pomA+5, pomB);
+		}
+		
 		for (String s : element)
 		{
 			if(s.contains("<tag k=\"name\"")){
 				//System.out.println("name");
-				rezultat += "\t\t<tag k=\"name\" v=\""+pripremaZaRenderOSM2.getName() + "\" />\n";
+				rezultat += "\t\t<tag k=\"name\" v=\""+pripremaZaRenderOSM2.getName() + debugString + "\" />\n";
 				if(!pripremaZaRenderOSM2.daLiJeDefinisanTag("name:sr-Latn")){
-					rezultat += "\t\t<tag k=\"name:sr-Latn\" v=\""+pripremaZaRenderOSM2.getName_srLatn()+ "\" />\n";
+					rezultat += "\t\t<tag k=\"name:sr-Latn\" v=\""+pripremaZaRenderOSM2.getName_srLatn() + debugString + "\" />\n";
 				}
 			}
 			else if(s.contains("<tag k=\"name:sr-Latn\"")){
 				//System.out.println("name sr");
-				rezultat += "\t\t<tag k=\"name:sr-Latn\" v=\""+pripremaZaRenderOSM2.getName_srLatn()+ "\" />\n";
+				rezultat += "\t\t<tag k=\"name:sr-Latn\" v=\""+pripremaZaRenderOSM2.getName_srLatn() + debugString + "\" />\n";
 			}
 			else{
 				rezultat += s + "\n";
