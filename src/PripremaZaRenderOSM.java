@@ -56,7 +56,7 @@ public class PripremaZaRenderOSM extends StringElemetnOSM{
 			}
 		}
 		
-		return null;
+		return "";
 	}
 
 	public String getName_srLatn() {
@@ -77,7 +77,7 @@ public class PripremaZaRenderOSM extends StringElemetnOSM{
 			}
 		}
 		
-		return null;
+		return "";
 	}
 
 	public void setNameTagovi(List<String> nameTagovi) {

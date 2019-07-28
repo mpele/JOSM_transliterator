@@ -189,16 +189,34 @@ public class OSMParser2
 			debugString = " " + element.get(0).substring(pomA+5, pomB);
 		}
 		
+		boolean foundName = false;
+		boolean foundNameLatn = false;
 		for (String s : element)
 		{
-			if(s.contains("<tag k=\"name\"")){
-				//System.out.println("name");
-				rezultat += "\t\t<tag k=\"name\" v=\""+pripremaZaRenderOSM2.getName() + debugString + "\" />\n";
-				if(!pripremaZaRenderOSM2.daLiJeDefinisanTag("name:sr-Latn")){
-					rezultat += "\t\t<tag k=\"name:sr-Latn\" v=\""+pripremaZaRenderOSM2.getName_srLatn() + debugString + "\" />\n";
+			if (s.trim().startsWith("</")) {
+				// Node/way/relation tag is closing, add missing
+				if (!foundName) {
+					String generatedName = pripremaZaRenderOSM2.getName();
+					if (generatedName != null) {
+						rezultat += "\t\t<tag k=\"name\" v=\"" + generatedName + debugString + "\" />\n";
+					}
+				}
+
+				if (!foundNameLatn) {
+					String generatedNameLatn = pripremaZaRenderOSM2.getName_srLatn();
+					if (generatedNameLatn != null) {
+						rezultat += "\t\t<tag k=\"name:sr-Latn\" v=\""+ generatedNameLatn + debugString + "\" />\n";
+					}
 				}
 			}
+
+			if(s.contains("<tag k=\"name\"")){
+				foundName = true;
+				//System.out.println("name");
+				rezultat += "\t\t<tag k=\"name\" v=\""+pripremaZaRenderOSM2.getName() + debugString + "\" />\n";
+			}
 			else if(s.contains("<tag k=\"name:sr-Latn\"")){
+				foundNameLatn = true;
 				//System.out.println("name sr");
 				rezultat += "\t\t<tag k=\"name:sr-Latn\" v=\""+pripremaZaRenderOSM2.getName_srLatn() + debugString + "\" />\n";
 			}
@@ -206,6 +224,7 @@ public class OSMParser2
 				rezultat += s + "\n";
 			}
 		}
+
 		
 		return rezultat;
 	}
