@@ -32,11 +32,11 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 enum EIdKoloneUTabeli{
@@ -422,8 +422,14 @@ public class PreslovljavanjeDialog extends JDialog {
 			}
 		}
 
-		Main.main.undoRedo.add(new SequenceCommand("Promena naziva", c));
-		Main.parent.repaint();
+	      SequenceCommand command = new SequenceCommand(
+	    		      //trn("Updating properties of up to {0} object", "Updating properties of up to {0} objects", selection.size(), selection.size()),
+	    		  "Promena naziva",
+	    		  	                c
+	    		          );
+		 // executes the commands and adds them to the undo/redo chains
+		UndoRedoHandler.getInstance().add(command);
+
 		// //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		// zatvara dijalog
