@@ -39,6 +39,7 @@ public class StartPreslovljavanjeDialog extends JDialog {
 	private JTextField mtxtDodatniParametri;
 	private JComboBox<Object> mComboBox;
 	private JCheckBox chckbxRelacije;
+	private JCheckBox chckbxLatinica;
 
 	public static void main(String[] args) {
 		try {
@@ -67,7 +68,7 @@ public class StartPreslovljavanjeDialog extends JDialog {
 				horizontalBox.setMaximumSize(new Dimension(400, 0));
 				verticalBox.add(horizontalBox);
 				{
-					JLabel lblPodrazumevanoPismo = new JLabel("Podrazumevano pismo: ");
+					JLabel lblPodrazumevanoPismo = new JLabel("Подразумевано писмо: ");
 					horizontalBox.add(lblPodrazumevanoPismo);
 				}
 				{
@@ -81,7 +82,24 @@ public class StartPreslovljavanjeDialog extends JDialog {
 				Box horizontalBox = Box.createHorizontalBox();
 				verticalBox.add(horizontalBox);
 				{
-					JLabel lblSpisakTagova = new JLabel("Spisak dodatnih tagova: ");
+					JLabel lblAzuriranjeNamesrlatn = new JLabel("Ажурирање name:sr-Latn");
+					horizontalBox.add(lblAzuriranjeNamesrlatn);
+				}
+				{
+					chckbxLatinica = new JCheckBox("");
+					chckbxLatinica.setSelected(true);
+					horizontalBox.add(chckbxLatinica);
+				}
+				{
+					Component horizontalGlue = Box.createHorizontalGlue();
+					horizontalBox.add(horizontalGlue);
+				}
+			}
+			{
+				Box horizontalBox = Box.createHorizontalBox();
+				verticalBox.add(horizontalBox);
+				{
+					JLabel lblSpisakTagova = new JLabel("Списак додатних тагова: ");
 					horizontalBox.add(lblSpisakTagova);
 				}
 				{
@@ -90,11 +108,6 @@ public class StartPreslovljavanjeDialog extends JDialog {
 					horizontalBox.add(mtxtDodatniParametri);
 					mtxtDodatniParametri.setColumns(15);
 				}
-			}
-			{
-				Component verticalStrut = Box.createVerticalStrut(20);
-				verticalStrut.setMinimumSize(new Dimension(0, 100));
-				verticalBox.add(verticalStrut);
 			}
 			{
 				Component verticalStrut = Box.createVerticalStrut(20);
@@ -145,7 +158,12 @@ public class StartPreslovljavanjeDialog extends JDialog {
 						// deli string iz txtField-a i dodaje kao dodatna polja
 						ArrayList<String> dodatniTagovi = new ArrayList<String>();
 						dodatniTagovi.addAll(new ArrayList<String>(Arrays.asList(mtxtDodatniParametri.getText().split(" "))));
-						PreslovljavanjeDialog dialog = new PreslovljavanjeDialog(dodatniTagovi,(PodrazumevanoPismo) mComboBox.getSelectedItem(),chckbxRelacije.isSelected());
+						PreslovljavanjeDialog dialog = new PreslovljavanjeDialog(
+								dodatniTagovi,
+								(PodrazumevanoPismo) mComboBox.getSelectedItem(),
+								chckbxRelacije.isSelected(),
+								chckbxLatinica.isSelected()
+								);
 						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 						
 						StartPreslovljavanjeDialog.this.dispose();

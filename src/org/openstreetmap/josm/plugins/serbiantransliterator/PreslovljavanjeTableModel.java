@@ -106,6 +106,7 @@ class PreslovljavanjeTableModel extends DefaultTableModel {
 	 * each cell. If we didn't implement this method, then the column would
 	 * contain text ("true"/"false"), rather than a check box.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Class getColumnClass(int c) {
 		///////////////////////////////////////////////////////////////////////////
 		// TODO krpljenje za dodavanje kolone
@@ -144,13 +145,16 @@ class PreslovljavanjeTableModel extends DefaultTableModel {
 	 * Preslovljava na osnovu polja name:sr
 	 * 
 	 * @param row
+	 * @param mpLatinicaSeMenja 
 	 */
-	public void presloviRedIzSr(int row) {
+	public void presloviRedIzSr(int row, boolean bpLatinicaSeMenja) {
 		String osnova = (String) getValueAt(row, EIdKoloneUTabeli.CIRILICA.getKolona());
 		Preslovljavanje presl = new Preslovljavanje();
-		setValueAt(presl.cir2lat(osnova), row, EIdKoloneUTabeli.LATINICA.getKolona()); // latinica
+		if(bpLatinicaSeMenja){ 
+			setValueAt(presl.cir2lat(osnova), row, EIdKoloneUTabeli.LATINICA.getKolona()); // latinica
+		}
 
-		// preslovljava tag name u zavisnosti sta je podeseno u dropboxu
+		// preslovljava tag name u zavisnosti sta je podeseno
 		switch (emPodrazumevanoPismo) {
 		case CIRILICA:
 			setValueAt(osnova, row, EIdKoloneUTabeli.NAME.getKolona());
@@ -165,21 +169,23 @@ class PreslovljavanjeTableModel extends DefaultTableModel {
 			break;
 		}
 
-		// TODO provera da li treba da snima izmene
 		setValueAt(new Boolean(true), row, 2); // izmena - da se sacuvava
 		fireTableRowsUpdated(row, row);
 	}
 
 	/**
-	 * Preslvoljava na osnovu PreslovljavanjeOSM
+	 * Preslovljava na osnovu PreslovljavanjeOSM
 	 * 
 	 * @param row
+	 * @param bpLatinicaSeMenja 
 	 */
-	public void presloviRedAuto(int row) {
+	public void presloviRedAuto(int row, boolean bpLatinicaSeMenja) {
 		PreslovljavanjeOSM preslovljavanjeOsm = (PreslovljavanjeOSM) getValueAt(
 				row, 0);
 		setValueAt(preslovljavanjeOsm.getName_sr(), row, EIdKoloneUTabeli.CIRILICA.getKolona()); // name:sr
-		setValueAt(preslovljavanjeOsm.getName_sr_lat(), row, EIdKoloneUTabeli.LATINICA.getKolona()); // name:sr-Latn
+		if(bpLatinicaSeMenja){ 
+			setValueAt(preslovljavanjeOsm.getName_sr_lat(), row, EIdKoloneUTabeli.LATINICA.getKolona()); // name:sr-Latn
+		}
 		setValueAt(preslovljavanjeOsm.getName(), row, EIdKoloneUTabeli.NAME.getKolona()); // name
 		setValueAt(daLiImaIzmena(row, preslovljavanjeOsm), row, 2); // izmene - da se sacuvava
 		fireTableRowsUpdated(row, row);

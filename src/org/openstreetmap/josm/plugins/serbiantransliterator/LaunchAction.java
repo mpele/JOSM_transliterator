@@ -14,6 +14,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class LaunchAction extends JosmAction implements DataSelectionListener  {
 
+	private static final long serialVersionUID = 1L;
+
 	public LaunchAction()  {
 
 		super(

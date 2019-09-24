@@ -29,15 +29,19 @@ public class PreslovljavanjeOSM extends StringElemetnOSM{
 
 	public static void main(String[] args) {
 		PreslovljavanjeOSM preslovljavanjeOsm = new PreslovljavanjeOSM();
-		preslovljavanjeOsm.setPodrazumevanoPismo(PodrazumevanoPismo.LATINICA);
+		preslovljavanjeOsm.setPodrazumevanoPismo(PodrazumevanoPismo.CIRILICA);
+		//preslovljavanjeOsm.setPodrazumevanoPismo(PodrazumevanoPismo.LATINICA);
 		preslovljavanjeOsm.setAzuriratiName(true);
 
-		preslovljavanjeOsm.setNameKeyValue("name", "Аеродром Београд - Никола Тесла");
-		preslovljavanjeOsm.setNameKeyValue("name:en", "Belgrade Nikola Tesla Airport");
-		preslovljavanjeOsm.setNameKeyValue("name:ru", "Аеродром Београд - Никола Тесла");
-		preslovljavanjeOsm.setNameKeyValue("name:sl", "Letališče Nikola Tesla");
-		preslovljavanjeOsm.setNameKeyValue("name:sr" , "Аеродром Београд - Никола Тесла");
-		preslovljavanjeOsm.setNameKeyValue("name:sr-Latn", "Aerodrom Beograd - Nikola Tesla");
+		preslovljavanjeOsm.setNameKeyValue("name", "Аеродром \"Београд\" - Никола Тесла");
+		preslovljavanjeOsm.setNameKeyValue("name:sr" , "Аеродром \"Београд\" - Никола Тесла");
+		preslovljavanjeOsm.setNameKeyValue("name:sr-Latn", "Aerodrom \"Beograd\" - Nikola Tesla");
+//		preslovljavanjeOsm.setNameKeyValue("name", "Аеродром Београд - Никола Тесла");
+//		preslovljavanjeOsm.setNameKeyValue("name:en", "Belgrade Nikola Tesla Airport");
+//		preslovljavanjeOsm.setNameKeyValue("name:ru", "Аеродром Београд - Никола Тесла");
+//		preslovljavanjeOsm.setNameKeyValue("name:sl", "Letališče Nikola Tesla");
+//		preslovljavanjeOsm.setNameKeyValue("name:sr" , "Аеродром Београд - Никола Тесла");
+//		preslovljavanjeOsm.setNameKeyValue("name:sr-Latn", "Aerodrom Beograd - Nikola Tesla");
 		//preslovljavanjeOsm.setNameKeyValue("name:sr","Latinica");
 		//		preslovljavanjeOsm.setName_sr_lat("Latinica");
 		//		preslovljavanjeOsm.setName_en("Latinica");

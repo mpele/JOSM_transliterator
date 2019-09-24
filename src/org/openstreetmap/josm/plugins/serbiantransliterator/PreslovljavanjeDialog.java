@@ -67,6 +67,7 @@ public class PreslovljavanjeDialog extends JDialog {
 	private static final long serialVersionUID = -4717990196196081917L;
 	private final JPanel contentPanel = new JPanel();
 	private boolean mbExpert = false;
+	private boolean mbLatinicaSeMenja;
 	private JTable mTable;
 	JComboBox<Object> mComboBox;
 
@@ -94,7 +95,7 @@ public class PreslovljavanjeDialog extends JDialog {
 	 * Konstruktor bez dodatnih tagova
 	 */
 	public PreslovljavanjeDialog() {
-		this(new ArrayList<String>(),PodrazumevanoPismo.BEZ_PROMENE, false);
+		this(new ArrayList<String>(),PodrazumevanoPismo.BEZ_PROMENE, false, true);
 	}
 
 
@@ -102,7 +103,7 @@ public class PreslovljavanjeDialog extends JDialog {
 	 * Glavni konstruktor
 	 * Konstruktor sa dodatnim tagovima i da li je ekspert (da li radi sa relacijama)
 	 */		
-	public PreslovljavanjeDialog(ArrayList<String> dodatniTagovi, PodrazumevanoPismo podrazumevanoPismo, boolean bool) {
+	public PreslovljavanjeDialog(ArrayList<String> dodatniTagovi, PodrazumevanoPismo podrazumevanoPismo, boolean bExpert, boolean bLatinica) {
 		setModal(true);
 		setTitle("Preslovljavanje");
 		setBounds(100, 100, 1100, 700);
@@ -119,7 +120,8 @@ public class PreslovljavanjeDialog extends JDialog {
 			mTable = new JTable(mModel);
 			mTable.setAutoCreateRowSorter(true);
 
-			mbExpert = bool;
+			mbExpert = bExpert;
+			mbLatinicaSeMenja = bLatinica;
 
 			ucitajSveTagoveIzSelektovanihObjekata(podrazumevanoPismo);
 			mModel.setPodrazumevanoPismo(podrazumevanoPismo);
@@ -302,7 +304,7 @@ public class PreslovljavanjeDialog extends JDialog {
 			// da prebaci broj reda iz sortirane tabele u red po
 			// modelu
 			int row = mTable.convertRowIndexToModel(rows[i]);
-			mModel.presloviRedIzSr(row);
+			mModel.presloviRedIzSr(row, mbLatinicaSeMenja);
 		}
 	}
 
@@ -312,7 +314,7 @@ public class PreslovljavanjeDialog extends JDialog {
 			// da prebaci broj reda iz sortirane tabele u red po
 			// modelu
 			int row = mTable.convertRowIndexToModel(rows[i]);
-			mModel.presloviRedAuto(row);
+			mModel.presloviRedAuto(row, mbLatinicaSeMenja);
 		}
 	}
 

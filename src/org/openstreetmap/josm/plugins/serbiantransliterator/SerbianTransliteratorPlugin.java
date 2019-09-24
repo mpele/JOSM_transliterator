@@ -1,7 +1,5 @@
 package org.openstreetmap.josm.plugins.serbiantransliterator;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.plugins.Plugin;
