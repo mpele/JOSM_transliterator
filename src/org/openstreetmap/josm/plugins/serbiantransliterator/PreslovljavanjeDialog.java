@@ -209,7 +209,7 @@ public class PreslovljavanjeDialog extends JDialog {
 			contentPanel.add(panel, BorderLayout.NORTH);
 			panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 			{
-				JLabel lblPodrazumevanoPismo = new JLabel("Podrazumevano pismo");
+				JLabel lblPodrazumevanoPismo = new JLabel("Подразумевано писмо");
 				panel.add(lblPodrazumevanoPismo);
 			}
 			{
@@ -226,7 +226,7 @@ public class PreslovljavanjeDialog extends JDialog {
 				panel.add(mComboBox);
 			}
 			{
-				JButton btnRemove = new JButton("Uklnoni redove");
+				JButton btnRemove = new JButton("Уклони редове");
 				panel.add(btnRemove);
 				btnRemove.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) { // brise
@@ -240,32 +240,35 @@ public class PreslovljavanjeDialog extends JDialog {
 				});
 			}
 			{
-				JButton btnPreslovi = new JButton("Preslovi iz sr");
+				JButton btnPreslovi = new JButton("Преслови из name:sr");
 				panel.add(btnPreslovi);
 				btnPreslovi.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) { 
 						presloviSelektovanoIzSr();
 					}
 				});
+				btnPreslovi.setToolTipText("Ctrl+S");
 			}
 			{
-				JButton btnPresloviAuto = new JButton("Preslovi auto");
+				JButton btnPresloviAuto = new JButton("Преслови аутоматски");
 				panel.add(btnPresloviAuto);
 				btnPresloviAuto.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) { 
 						presloviSelektovanoAuto();
 					}
 				});
+				btnPresloviAuto.setToolTipText("Ctrl+D");
 			}
 			{
 				// vraca originalne zapise
-				JButton btnOriginal = new JButton("Original");
+				JButton btnOriginal = new JButton("Оригинал");
 				panel.add(btnOriginal);
 				btnOriginal.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) { 
 						vratiSelektovaneNaOriginale();
 					}
 				});
+				btnOriginal.setToolTipText("Ctrl+F");
 			}
 		}
 		{
