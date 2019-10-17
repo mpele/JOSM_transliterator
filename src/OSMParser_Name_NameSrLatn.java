@@ -1,3 +1,8 @@
+/**
+ * Ovaj fajl se koristi za definisanje taga name i name:sr-Latn
+ * 
+ */
+
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -10,13 +15,13 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class OSMParser2 
+public class OSMParser_Name_NameSrLatn 
 {
 	FileWriter mOutFile;
 
 	public PripremaZaRenderOSM pripremaZaRenderOSM = new PripremaZaRenderOSM();
 
-	boolean mbGenerisanjeNovOSMFajl = false; // menja se ako se definise izlazni fajl
+	boolean mbIspisUNovOSMFajl = false; // menja se ako se definise izlazni fajl
 	boolean debug = false;
 
 	private String mNazivUlaznogFajla;
@@ -25,11 +30,11 @@ public class OSMParser2
 		String izlazniFajl = null;
 		String mUlazniFajl = null;
 		String arg;
-		OSMParser2 parser = new OSMParser2();
+		OSMParser_Name_NameSrLatn parser = new OSMParser_Name_NameSrLatn();
 		if(args.length==0)
 		{
 			System.out.println("-izlaz=");
-			System.out.println("\tIzlazni fajl");
+			System.out.println("\tIzlazni fajl. Ako nije definisan izlazni fajl ispisuje na StdOut");
 			System.out.println("-ulaz=");
 			System.out.println("\tUlazni fajl");
 
@@ -38,6 +43,7 @@ public class OSMParser2
 
 			System.out.println("Primer za popunjavanje taga name sa drugim tagovima: \njava -cp serbiantransliterator.jar OSMParser2 -ulaz=serbia.osm -izlaz=rezultat.osm name:sr;name name:sr-Latn;Pname:sr");
 			System.out.println("Za debug dodati jos parametar debug na kraj.");
+			// -ulaz=kosovo.osm -izlaz=rezultat.osm name:sr@name@name:sr-Latn@name:en name:sr-Latn@Pname:sr@name@Pname:en@name
 
 			return;
 		}
@@ -49,12 +55,11 @@ public class OSMParser2
 			// izlazni fajl sa primenjenim svim izmenama
 			if (arg.startsWith("-izlaz=")) {
 				izlazniFajl = arg.substring(7); // od stringa 
-				System.out.println("Izlazni fajl: "+izlazniFajl);
+				parser.setIzlazniFajl(izlazniFajl);
 			}
 			// izlazni fajl sa primenjenim svim izmenama
 			else if (arg.startsWith("-ulaz=")) {
 				mUlazniFajl = arg.substring(6); // od stringa 
-				System.out.println("Ulazni fajl: "+mUlazniFajl);
 			}
 		}
 		
@@ -64,11 +69,10 @@ public class OSMParser2
 			parser.setDebug(true);
 		}
 
-
-		if(izlazniFajl!=null)
-			parser.setIzlazniFajl(izlazniFajl);
-		else
-			parser.setIzlazniFajl("rezultat.osm");
+		if(izlazniFajl!=null){
+			System.out.println("Izlazni fajl: "+izlazniFajl);
+			System.out.println("Ulazni fajl: "+mUlazniFajl);
+		}
 
 		if(mUlazniFajl==null)
 			parser.run("serbia.osm");
@@ -83,13 +87,16 @@ public class OSMParser2
 
 
 	private void ispisUFajl(String string){
-		if(mbGenerisanjeNovOSMFajl){ 
+		if(mbIspisUNovOSMFajl){ 
 			try {
 				mOutFile.write(string);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		else{
+			System.out.println(string);
 		}
 	}
 
@@ -98,7 +105,7 @@ public class OSMParser2
 	 * @param nazivIzlaznogFajla
 	 */
 	public void setIzlazniFajl(String nazivIzlaznogFajla){
-		mbGenerisanjeNovOSMFajl = true;
+		mbIspisUNovOSMFajl = true;
 		// izlazni fajl
 		try {
 			mOutFile = new FileWriter(nazivIzlaznogFajla);
@@ -166,12 +173,16 @@ public class OSMParser2
 			//Close the input stream
 			in.close();
 			//Close the output streams
-			mOutFile.close();
+			if(mbIspisUNovOSMFajl){				
+				mOutFile.close();
+			}
 		}catch (Exception e){//Catch exception if any
 			e.printStackTrace();
 			System.err.println("Error: " + e.getMessage());
 		}
-		System.out.println("Gotovo");
+		if(mbIspisUNovOSMFajl){
+			System.out.println("Gotovo");
+		}
 	}
 
 
