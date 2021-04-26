@@ -7,17 +7,20 @@
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 
-public class OSMParser_Name_NameSrLatn 
+public class OSMParser_Name_NameSrLatn
 {
-	FileWriter mOutFile;
+	
+	OutputStreamWriter mOutFile;
 
 	public PripremaZaRenderOSM pripremaZaRenderOSM = new PripremaZaRenderOSM();
 
@@ -41,7 +44,7 @@ public class OSMParser_Name_NameSrLatn
 			System.out.println("prva grupa tagova (razdvojenih sa '@') je za name a druga za name:sr-Latn ");
 			System.out.println("ako za name:sr-Latn tag pocinje sa 'P' radi se preslovljavanje u latinicu ");
 
-			System.out.println("Primer za popunjavanje taga name sa drugim tagovima: \njava -cp serbiantransliterator.jar OSMParser2 -ulaz=serbia.osm -izlaz=rezultat.osm name:sr;name name:sr-Latn;Pname:sr");
+			System.out.println("Primer za popunjavanje taga name sa drugim tagovima: \njava -cp serbiantransliterator.jar OSMParser_Name_NameSrLatn -ulaz=serbia.osm -izlaz=rezultat.osm name:sr;name name:sr-Latn;Pname:sr");
 			System.out.println("Za debug dodati jos parametar debug na kraj.");
 			// -ulaz=kosovo.osm -izlaz=rezultat.osm name:sr@name@name:sr-Latn@name:en name:sr-Latn@Pname:sr@name@Pname:en@name
 
@@ -62,7 +65,7 @@ public class OSMParser_Name_NameSrLatn
 				mUlazniFajl = arg.substring(6); // od stringa 
 			}
 		}
-		
+
 		parser.pripremaZaRenderOSM.setNameTagovi(Arrays.asList(args[i++].split("@")));
 		parser.pripremaZaRenderOSM.setNameSrLatTagovi(Arrays.asList(args[i++].split("@")));
 		if(args.length > i){
@@ -70,8 +73,8 @@ public class OSMParser_Name_NameSrLatn
 		}
 
 		if(izlazniFajl!=null){
-			System.out.println("Izlazni fajl: "+izlazniFajl);
 			System.out.println("Ulazni fajl: "+mUlazniFajl);
+			System.out.println("Izlazni fajl: "+izlazniFajl);
 		}
 
 		if(mUlazniFajl==null)
@@ -80,7 +83,7 @@ public class OSMParser_Name_NameSrLatn
 			parser.run(mUlazniFajl);
 	}
 
-	
+
 	private void setDebug(boolean b) {
 		debug = b;
 	}
@@ -108,14 +111,14 @@ public class OSMParser_Name_NameSrLatn
 		mbIspisUNovOSMFajl = true;
 		// izlazni fajl
 		try {
-			mOutFile = new FileWriter(nazivIzlaznogFajla);
+			mOutFile = new OutputStreamWriter(new FileOutputStream(nazivIzlaznogFajla), StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 	}
 
-	
+
 	/**
 	 * Startuje parser sa ulaznim fajlom
 	 * @param nazivUlaznogFajla
@@ -131,7 +134,7 @@ public class OSMParser_Name_NameSrLatn
 			FileInputStream fstream = new FileInputStream(ulazniFajl);
 
 			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
 			String strLine;
 			String elementString = null;
@@ -142,7 +145,7 @@ public class OSMParser_Name_NameSrLatn
 
 			boolean poceoDaObradjuje = false; // da preskoci zaglavlje
 			while ((strLine = br.readLine()) != null) {
-				
+
 				if(strLine.contains("<node ") | strLine.contains("<way ")| strLine.contains("<relation ") ){  // ako je pocetak novog node
 					elementString = srediElement(element, pripremaZaRenderOSM);
 					ispisUFajl(elementString);
@@ -186,20 +189,24 @@ public class OSMParser_Name_NameSrLatn
 	}
 
 
-	private String srediElement(List<String> element, PripremaZaRenderOSM pripremaZaRenderOSM2) {
+	protected String srediElement(List<String> element, PripremaZaRenderOSM pripremaZaRenderOSM2) {
 		String rezultat = "";
 		String debugString = "";
-		
+
+		String id_elementa = "";
+
 		if(element.isEmpty()){
 			return "";
 		}
-		
+
 		if(debug){
 			int pomA = element.get(0).indexOf(" id=");
 			int pomB = element.get(0).indexOf('"', pomA+6);
-			debugString = " " + element.get(0).substring(pomA+5, pomB);
+			id_elementa = element.get(0).substring(pomA+5, pomB);
+			debugString = " " + id_elementa;
 		}
-		
+
+
 		boolean foundName = false;
 		boolean foundNameLatn = false;
 		for (String s : element)
@@ -236,7 +243,6 @@ public class OSMParser_Name_NameSrLatn
 			}
 		}
 
-		
 		return rezultat;
 	}
 }
