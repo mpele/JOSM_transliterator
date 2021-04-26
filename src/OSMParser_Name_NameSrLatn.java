@@ -36,25 +36,16 @@ public class OSMParser_Name_NameSrLatn
 		OSMParser_Name_NameSrLatn parser = new OSMParser_Name_NameSrLatn();
 		if(args.length==0)
 		{
-			System.out.println("-izlaz=");
-			System.out.println("\tIzlazni fajl. Ako nije definisan izlazni fajl ispisuje na StdOut");
-			System.out.println("-ulaz=");
-			System.out.println("\tUlazni fajl");
-
-			System.out.println("prva grupa tagova (razdvojenih sa '@') je za name a druga za name:sr-Latn ");
-			System.out.println("ako za name:sr-Latn tag pocinje sa 'P' radi se preslovljavanje u latinicu ");
-
-			System.out.println("Primer za popunjavanje taga name sa drugim tagovima: \njava -cp serbiantransliterator.jar OSMParser_Name_NameSrLatn -ulaz=serbia.osm -izlaz=rezultat.osm name:sr;name name:sr-Latn;Pname:sr");
-			System.out.println("Za debug dodati jos parametar debug na kraj.");
-			// -ulaz=kosovo.osm -izlaz=rezultat.osm name:sr@name@name:sr-Latn@name:en name:sr-Latn@Pname:sr@name@Pname:en@name
-
-			return;
+			System.out.println("Cita stdin i obradjuje \n Koristiti parametar -h za pomoc");
 		}
 
 		int i = 0;
 		while (i < args.length && args[i].startsWith("-")) {
 			arg = args[i++];
 
+			if (arg.startsWith("-h")) {
+				parser.porurkaZaHelp();
+			}
 			// izlazni fajl sa primenjenim svim izmenama
 			if (arg.startsWith("-izlaz=")) {
 				izlazniFajl = arg.substring(7); // od stringa 
@@ -72,17 +63,20 @@ public class OSMParser_Name_NameSrLatn
 			parser.setDebug(true);
 		}
 
-		if(izlazniFajl!=null){
-			System.out.println("Ulazni fajl: "+mUlazniFajl);
-			System.out.println("Izlazni fajl: "+izlazniFajl);
-		}
+		System.out.println("Ulazni fajl: "+mUlazniFajl);
+		System.out.println("Izlazni fajl: "+izlazniFajl);
 
-		if(mUlazniFajl==null)
-			parser.run("serbia.osm");
-		else
-			parser.run(mUlazniFajl);
+		parser.run(mUlazniFajl);
 	}
 
+	protected void porurkaZaHelp() {
+		System.out.println("-h");
+		System.out.println("\tispisuje ovu informaciju");
+		System.out.println("-izlaz=");
+		System.out.println("\tIzlazni fajl. Ako nije definisan izlazni fajl ispisuje na StdOut");
+		System.out.println("-ulaz=");
+		System.out.println("\tUlazni fajl");
+	}
 
 	private void setDebug(boolean b) {
 		debug = b;
@@ -124,17 +118,26 @@ public class OSMParser_Name_NameSrLatn
 	 * @param nazivUlaznogFajla
 	 */
 	public void run(String ulazniFajl){
+		InputStreamReader inputStreamReader;
 		
-		//izdvaja sam naziv fajla bez putanje i ekstenzije
-		mNazivUlaznogFajla=ulazniFajl.replace(".osm", "");// brise ekstenziju - osm
-		mNazivUlaznogFajla=mNazivUlaznogFajla.substring(mNazivUlaznogFajla.lastIndexOf('/')+1); //brise putanju
-
 		try{
-			// Open the file  
-			FileInputStream fstream = new FileInputStream(ulazniFajl);
+			
+			if(ulazniFajl != null) { // definisan naziv fajla
+				//izdvaja sam naziv fajla bez putanje i ekstenzije
+				mNazivUlaznogFajla=ulazniFajl.replace(".osm", "");// brise ekstenziju - osm
+				mNazivUlaznogFajla=mNazivUlaznogFajla.substring(mNazivUlaznogFajla.lastIndexOf('/')+1); //brise putanju
+				
+				// Open the file  
+				FileInputStream fstream = new FileInputStream(ulazniFajl);
 
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+				DataInputStream in = new DataInputStream(fstream);
+				inputStreamReader = new InputStreamReader(in, StandardCharsets.UTF_8);
+			}
+			else { // cita iz stdin
+				inputStreamReader = new InputStreamReader(System.in);
+			}
+
+			BufferedReader br = new BufferedReader(inputStreamReader);;
 
 			String strLine;
 			String elementString = null;
@@ -172,9 +175,6 @@ public class OSMParser_Name_NameSrLatn
 			elementString = srediElement(element, pripremaZaRenderOSM);
 			ispisUFajl(elementString);
 
-
-			//Close the input stream
-			in.close();
 			//Close the output streams
 			if(mbIspisUNovOSMFajl){				
 				mOutFile.close();

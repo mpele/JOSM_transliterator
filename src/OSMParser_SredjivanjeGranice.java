@@ -1,8 +1,6 @@
 /**
- * Ovaj fajl se koristi za definisanje taga name i name:sr-Latn
- * 
+ * Ovaj fajl se koristi za sredjivanje granice Srbije 
  */
-
 
 import java.util.List;
 
@@ -15,21 +13,19 @@ public class OSMParser_SredjivanjeGranice extends OSMParser_Name_NameSrLatn
 		String mUlazniFajl = null;
 		String arg;
 		OSMParser_SredjivanjeGranice parser = new OSMParser_SredjivanjeGranice();
+
 		if(args.length==0)
 		{
-			System.out.println("Sredjuje granice");
-
-			System.out.println("-izlaz=");
-			System.out.println("\tIzlazni fajl. Ako nije definisan izlazni fajl ispisuje na StdOut");
-			System.out.println("-ulaz=");
-			System.out.println("\tUlazni fajl");
-			return;
+			System.out.println("Cita stdin i obradjuje \n Koristiti parametar -h za pomoc");
 		}
-
+		
 		int i = 0;
 		while (i < args.length && args[i].startsWith("-")) {
 			arg = args[i++];
 
+			if (arg.startsWith("-h")) {
+				parser.porurkaZaHelp();
+			}
 			// izlazni fajl sa primenjenim svim izmenama
 			if (arg.startsWith("-izlaz=")) {
 				izlazniFajl = arg.substring(7); // od stringa 
@@ -42,18 +38,26 @@ public class OSMParser_SredjivanjeGranice extends OSMParser_Name_NameSrLatn
 		}
 
 
-		if(izlazniFajl!=null){
-			System.out.println("Sredjuje granice");
-			System.out.println("Ulazni fajl: "+mUlazniFajl);
-			System.out.println("Izlazni fajl: "+izlazniFajl);
-		}
+		System.out.println("Sredjuje granice");
+		System.out.println("Ulazni fajl: "+mUlazniFajl);
+		System.out.println("Izlazni fajl: "+izlazniFajl);
 
-		if(mUlazniFajl==null)
-			parser.run("serbia.osm");
-		else
-			parser.run(mUlazniFajl);
+		
+		parser.run(mUlazniFajl);
 	}
 
+	@Override
+	protected void porurkaZaHelp() {
+		System.out.println("-h");
+		System.out.println("\tispisuje ovu informaciju");
+		System.out.println("-izlaz=");
+		System.out.println("\tIzlazni fajl. Ako nije definisan izlazni fajl ispisuje na StdOut");
+		System.out.println("-ulaz=");
+		System.out.println("\tUlazni fajl");
+		System.out.println("\n   Na pripremljenom fajlu se mogu srediti granice sa komandom:");
+		System.out.println("osmosis --read-pbf file.pbf --write-xml file=/dev/stdout | java OSMParser_SredjivanjeGranice | osmosis --read-xml file=/dev/stdin --write-pbf /home/mpele/OSM_skripte/tmp/sredjen_fajl.pbf ");
+	}
+	
 	@Override
 	protected String srediElement(List<String> element, PripremaZaRenderOSM pripremaZaRenderOSM2) {
 		String rezultat = "";
