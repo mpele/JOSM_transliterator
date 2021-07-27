@@ -40,6 +40,7 @@ public class StartPreslovljavanjeDialog extends JDialog {
 	private JComboBox<Object> mComboBox;
 	private JCheckBox chckbxRelacije;
 	private JCheckBox chckbxLatinica;
+	private JTextField mtextMaticniBrojNaselja;
 
 	public static void main(String[] args) {
 		try {
@@ -115,9 +116,18 @@ public class StartPreslovljavanjeDialog extends JDialog {
 				verticalBox.add(verticalStrut);
 			}
 			{
-				Component verticalStrut = Box.createVerticalStrut(20);
-				verticalStrut.setMinimumSize(new Dimension(0, 100));
-				verticalBox.add(verticalStrut);
+				Box horizontalBox = Box.createHorizontalBox();
+				verticalBox.add(horizontalBox);
+				{
+					JLabel lblSpisakTagova = new JLabel("Матични број насеља");
+					horizontalBox.add(lblSpisakTagova);
+				}
+				{
+					mtextMaticniBrojNaselja = new JTextField();
+					mtextMaticniBrojNaselja.setText("741744");
+					mtextMaticniBrojNaselja.setColumns(15);
+					horizontalBox.add(mtextMaticniBrojNaselja);
+				}
 			}
 			{
 				Component verticalStrut = Box.createVerticalStrut(20);
@@ -162,7 +172,8 @@ public class StartPreslovljavanjeDialog extends JDialog {
 								dodatniTagovi,
 								(PodrazumevanoPismo) mComboBox.getSelectedItem(),
 								chckbxRelacije.isSelected(),
-								chckbxLatinica.isSelected()
+								chckbxLatinica.isSelected(),
+								mtextMaticniBrojNaselja.getText()
 								);
 						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 						

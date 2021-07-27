@@ -70,6 +70,7 @@ public class PreslovljavanjeDialog extends JDialog {
 	private boolean mbLatinicaSeMenja;
 	private JTable mTable;
 	JComboBox<Object> mComboBox;
+	private String mMaticniBrojNaselja;
 
 	PreslovljavanjeTableModel mModel;
 	PodrazumevanoPismo mPodrazumevanoPismoAutoPreslovljavanje;
@@ -95,15 +96,17 @@ public class PreslovljavanjeDialog extends JDialog {
 	 * Konstruktor bez dodatnih tagova
 	 */
 	public PreslovljavanjeDialog() {
-		this(new ArrayList<String>(),PodrazumevanoPismo.BEZ_PROMENE, false, true);
+		this(new ArrayList<String>(),PodrazumevanoPismo.BEZ_PROMENE, false, true, "");
 	}
 
 
 	/**
 	 * Glavni konstruktor
 	 * Konstruktor sa dodatnim tagovima i da li je ekspert (da li radi sa relacijama)
+	 * @param string 
 	 */		
-	public PreslovljavanjeDialog(ArrayList<String> dodatniTagovi, PodrazumevanoPismo podrazumevanoPismo, boolean bExpert, boolean bLatinica) {
+	public PreslovljavanjeDialog(ArrayList<String> dodatniTagovi, PodrazumevanoPismo podrazumevanoPismo, 
+			boolean bExpert, boolean bLatinica, String maticniBrojNaselja) {
 		setModal(true);
 		setTitle("Preslovljavanje");
 		setBounds(100, 100, 1100, 700);
@@ -112,6 +115,7 @@ public class PreslovljavanjeDialog extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
+		mMaticniBrojNaselja = maticniBrojNaselja;
 		{
 			// mModel = new DefaultTableModel();
 			mModel = new PreslovljavanjeTableModel();
@@ -346,6 +350,7 @@ public class PreslovljavanjeDialog extends JDialog {
 
 		Collection<OsmPrimitive> selection = MainApplication.getLayerManager().getEditDataSet().getSelected();
 
+		PovezivanjeSaUlicaSaRGZ povezivanjeSaUlicaSaRGZ = new PovezivanjeSaUlicaSaRGZ(mMaticniBrojNaselja);
 		for (OsmPrimitive element : selection) {
 			PreslovljavanjeOSM preslovljavanjeOSM = new PreslovljavanjeOSM();
 			preslovljavanjeOSM.setPodrazumevanoPismo(podrazumevanoPismo);
@@ -356,6 +361,12 @@ public class PreslovljavanjeDialog extends JDialog {
 				preslovljavanjeOSM.setNameKeyValue(key, value);
 			}
 
+			
+			if (preslovljavanjeOSM.getTagValue("highway") != "") {
+				System.out.println("   Naziv ulice : " + preslovljavanjeOSM.getName());
+				preslovljavanjeOSM.setNameKeyValue("note", PovezivanjeSaUlicaSaRGZ.nadjiIDulice(preslovljavanjeOSM.getName()));
+			}
+			
 			// ako ima tagova za naziv upisuje u tabelu
 			if (preslovljavanjeOSM.daLiImaTagovaZaNaziv() ) {
 				// ne upisuje relacije ako nije expert
@@ -366,7 +377,7 @@ public class PreslovljavanjeDialog extends JDialog {
 					System.out.println("Upisuje");
 					insert(preslovljavanjeOSM);
 				}
-			}
+			}			
 		}
 	}
 
