@@ -1,10 +1,2 @@
-README 
-======
-
-The SerbianTransliterator plugin for JSOM automates translateration of names
-
-
-Стартовање форсиране замене тага name са тагом name:sr или name:sr-Latn или name:en
-
-java -Dfile.encoding=UTF-8 OSMParser -ulaz=../../merged3.osm -forsirajZamenuTagaName name:sr name:sr-Latn name:en
+Пројекат је премештен на https://gitlab.com/osm-serbia/JOSM_transliterator 
  
